@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p> you are: <a id='percentBasicality'></a> percent basic!</p>
+    <p> you have <%= fraction %> of your top artists in the global top 50 chart</p>
+    <p> your top artists are:</p>
+    <ol>
+        <% for (var i = 0; i < topArtists.length; i++) { %>
+            <li> <%= topArtists[i] %> </li>
+        <% } %>
+    </ol>
+  </body>
+</html>
+
+<script>
+    var basicality = '<%= basicality %>';
+    document.getElementById("percentBasicality").innerText = Math.round(basicality * 100);
+</script>

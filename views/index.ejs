@@ -6,6 +6,12 @@
   </head>
   <body>
     <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+    <button id="startButton">let's begin!</button>
   </body>
 </html>
+
+<script>
+  document.getElementById("startButton").onclick = function() {
+    window.location.href = '/login';
+  };
+</script>
