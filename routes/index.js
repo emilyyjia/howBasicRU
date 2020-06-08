@@ -25,7 +25,7 @@ router.get('/callback', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-  spotifyController.loginSpotify(res)
+  spotifyController.loginSpotify(req, res)
 });
 
 module.exports = router;

@@ -1,23 +1,21 @@
 var SpotifyWebApi = require('spotify-web-api-node');
 var querystring = require('querystring');
 
-var client_id = ''; // Take out when showing others
-var client_secret = ''; // Take out when showing others
-var redirect_uri = 'http://localhost:3000/callback'; // Your redirect uri
+var client_id = process.env.SPOTIFYAPICLIENTID;
+var client_secret = process.env.SPOTIFYAPICLIENTSECRET;
+var redirect_uri_path = '/callback'; 
+var redirect_uri = 'http://localhost:3000/callback';
 var stateKey = 'spotify_auth_state'
 var globalTopFiftyId = '37i9dQZEVXbMDoHDwVN2tF';
 
-var spotifyApi = new SpotifyWebApi({
-    clientId: client_id,
-    clientSecret: client_secret,
-    redirectUri: redirect_uri
-});
 
 /**
  * Function to log into Spotify
  */
-module.exports.loginSpotify = function(res) {
+module.exports.loginSpotify = function(req, res) {
     var state = generateRandomString(16);
+    redirect_uri = req.protocol + '://' + req.get('host') + redirect_uri_path;
+    console.log(redirect_uri);
     res.cookie(stateKey, state);
 
     var scope = 'user-top-read';
@@ -32,10 +30,16 @@ module.exports.loginSpotify = function(res) {
     );
 }
 
+var spotifyApi = new SpotifyWebApi({
+    clientId: client_id,
+    clientSecret: client_secret
+});
+
 /**
- * Function to get an user's top artists
+ * Function to get an user's top artists and match to the global top 50
  */
 module.exports.callbackSpotify = function(req, res) {
+    spotifyApi.setRedirectURI(redirect_uri);
     spotifyApi.authorizationCodeGrant(req.query.code).then(function(data) {
         spotifyApi.setAccessToken(data.body.access_token);
         spotifyApi.setRefreshToken(data.body.refresh_token);
@@ -79,8 +83,14 @@ module.exports.callbackSpotify = function(req, res) {
                 var basicality = numMatches/artistIds.length;
                 req.session.basicality = basicality;
                 res.redirect('/howBasicRU');
+            },
+            function(err) {
+                console.error(err);
             })
         });
+    },
+    function(err) {
+        console.error(err);
     });
 }
 
